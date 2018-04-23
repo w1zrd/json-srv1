@@ -1,11 +1,9 @@
 #!flask/bin/python
 from flask import Flask, jsonify, abort, make_response, request, url_for
 from flask_httpauth import HTTPBasicAuth
-import postgresql
 
-# TODO: make a houserecord`s structure
-# TODO: add json header with records count, previous and next URI
-# TODO: move records to the results section
+# TODO: convert picture name to URI
+# TODO: add load picture method
 
 # define app name
 app = Flask(__name__)
@@ -127,27 +125,6 @@ def delete_object(object_id):
     objects.remove(object[0])
     return jsonify({'result': True})
 
-##
-    # connect to database
-    db = postgresql.open('pq://user:postgres@localhost:5432/jsonsrv')
-    logger.debug('init a database connection string')
-
-    init_us = db.execute("CREATE TABLE IF NOT EXISTS profiles ("
-                               "user_id INTEGER PRIMARY KEY, "
-                               "username VARCHAR(64))")
-
-    init_db = db.execute("CREATE TABLE IF NOT EXISTS objects ("
-                         "id SERIAL PRIMARY KEY, "
-                         "o_date TIMESTAMP, "
-                         "o_name VARCHAR(64), "
-                         "o_currency VARCHAR(64), "
-                         "o_sum INTEGER NOT NULL, "
-                         "user_id INTEGER REFERENCES profiles(user_id), "
-                         "o_state INTEGER NOT NULL DEFAULT '1')")
-
-    # using db.query for get data from table
-    orders = db.query("SELECT * FROM objects ORDER BY id DESC LIMIT 1");
-
 if __name__ == '__main__':
     #app.run(host='0.0.0.0', port=80, debug=True)
-    app.run(host='0.0.0.0', port=80, debug=False)
+    app.run(debug=False)
