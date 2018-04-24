@@ -1,12 +1,20 @@
 #!flask/bin/python
-from flask import Flask, jsonify, abort, make_response, request, url_for
+import logging
+from flask import Flask, jsonify, abort, make_response, request, url_for, send_from_directory
 from flask_httpauth import HTTPBasicAuth
 
 # TODO: convert picture name to URI
 # TODO: add load picture method
 
+# enable logging
+level = 'INFO'
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.getLevelName(level))
+logger = logging.getLogger(__name__)
+
 # define app name
 app = Flask(__name__)
+UPLOAD_FOLDER = './images/'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # define auth method
 auth = HTTPBasicAuth()
@@ -125,6 +133,18 @@ def delete_object(object_id):
     objects.remove(object[0])
     return jsonify({'result': True})
 
+# loading images form root folders
+@app.route('/estate/api/v1.0/picture/<string:prefix>/<string:name>', methods=['GET'])
+def send_pics(prefix, name):
+    pics = open(UPLOAD_FOLDER + prefix + '/' + name)
+    if pics:
+        return send_from_directory(app.config['UPLOAD_FOLDER'], prefix + '/' + name)
+    abort(404)
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(app.config['UPLOAD_FOLDER'], 'favicon.png', mimetype='image/vnd.microsoft.icon')
+
 if __name__ == '__main__':
     #app.run(host='0.0.0.0', port=80, debug=True)
-    app.run(debug=False)
+    app.run(debug=True)
