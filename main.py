@@ -84,7 +84,7 @@ def get_object(object_id):
 
 @app.errorhandler(400)
 def not_found(error):
-    return make_response(jsonify( { 'error': 'Bad request' } ), 400)
+    return make_response(jsonify({'error': 'Bad request'}), 400)
 
 # return custom error
 @app.errorhandler(404)
@@ -148,5 +148,5 @@ def favicon():
     return send_from_directory(app.config['UPLOAD_FOLDER'], 'favicon.png', mimetype='image/vnd.microsoft.icon')
 
 if __name__ == '__main__':
-    #app.run(host='0.0.0.0', port=80, debug=True)
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=80, debug=True)
+    #app.run(debug=True)
