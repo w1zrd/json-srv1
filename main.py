@@ -39,12 +39,14 @@ objects = [
 
 #
 def make_public_objects(object):
-    new_object = {}
-    for field in object:
-        if field == 'id':
-            new_object['uri'] = url_for('get_object', object_id=object['id'], _external=True)
-        else:
-            new_object[field] = object[field]
+    new_object = object
+#    new_object = {}
+#    for field in object:
+#        if field == 'id':
+#            new_object['uri'] = url_for('get_object', object_id=object['id'], _external=True)
+#        else:
+#            new_object[field] = object[field]
+    new_object['uri'] = url_for('get_object', object_id=object['id'], _external=True)
     return new_object
 
 
@@ -72,7 +74,7 @@ def get_objects():
     return jsonify({'objects': list(map(make_public_objects, objects))})
 
 # return 1 object
-@app.route('/estate/api/v1.0/objects/<int:object_id>', methods=['GET'])
+@app.route('/estate/api/v1.0/object/<int:object_id>', methods=['GET'])
 @auth.login_required
 def get_object(object_id):
     object = list(filter(lambda t: t['id'] == object_id, objects))
@@ -90,7 +92,7 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 # return
-@app.route('/estate/api/v1.0/objects', methods=['POST'])
+@app.route('/estate/api/v1.0/object', methods=['POST'])
 @auth.login_required
 def create_object():
     if not request.json or not 'title' in request.json:
@@ -105,7 +107,7 @@ def create_object():
     return jsonify({'object': make_public_objects(object)}), 201
 
 #
-@app.route('/estate/api/v1.0/objects/<int:object_id>', methods=['PUT'])
+@app.route('/estate/api/v1.0/object/<int:object_id>', methods=['PUT'])
 @auth.login_required
 def update_object(object_id):
     object = list(filter(lambda t: t['id'] == object_id, objects))
@@ -124,7 +126,7 @@ def update_object(object_id):
     object[0]['sold'] = request.json.get('sold', object[0]['sold'])
     return jsonify({'object': make_public_objects(object[0])})
 
-@app.route('/estate/api/v1.0/objects/<int:object_id>', methods=['DELETE'])
+@app.route('/estate/api/v1.0/object/<int:object_id>', methods=['DELETE'])
 @auth.login_required
 def delete_object(object_id):
     object = list(filter(lambda t: t['id'] == object_id, objects))
